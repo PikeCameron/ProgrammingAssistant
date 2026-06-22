@@ -42,6 +42,5 @@ echo "opening $CHROMIUM..."
   --user-data-dir=/tmp/pr-dashboard-browser \
   --disable-infobars \
   --noerrdialogs \
-  --disable-gpu \
   &
 disown
