@@ -12,7 +12,7 @@ Version=1.0
 Type=Application
 Name=PR Dashboard
 Comment=Launch PR Dashboard
-Exec=chromium --ozone-platform=wayland --app=http://localhost:3000 --user-data-dir=/tmp/pr-dashboard-browser --disable-infobars --noerrdialogs
+Exec=chromium --ozone-platform=wayland --kiosk http://localhost:3000 --user-data-dir=/tmp/pr-dashboard-browser --disable-infobars --noerrdialogs
 Terminal=false
 StartupNotify=false
 EOF

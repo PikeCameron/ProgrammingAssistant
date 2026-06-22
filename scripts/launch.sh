@@ -42,7 +42,7 @@ rm -rf /tmp/pr-dashboard-browser 2>/dev/null
 echo "opening $CHROMIUM..."
 "$CHROMIUM" \
   --ozone-platform=wayland \
-  --app=http://localhost:3000 \
+  --kiosk http://localhost:3000 \
   --user-data-dir=/tmp/pr-dashboard-browser \
   --disable-infobars \
   --noerrdialogs \
