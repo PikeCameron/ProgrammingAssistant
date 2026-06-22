@@ -31,4 +31,10 @@ else
 fi
 
 echo "opening $CHROMIUM..."
-"$CHROMIUM" --app=http://localhost:3000 --disable-infobars --noerrdialogs &
+"$CHROMIUM" \
+  --app=http://localhost:3000 \
+  --user-data-dir=/tmp/pr-dashboard-browser \
+  --disable-infobars \
+  --noerrdialogs \
+  --disable-gpu \
+  &
