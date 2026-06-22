@@ -1,0 +1,15 @@
+[Unit]
+Description=PR Dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/home/pi/ProgrammingAssistant
+ExecStart=/usr/bin/node dist/server/index.js
+Restart=on-failure
+RestartSec=5
+EnvironmentFile=/home/pi/ProgrammingAssistant/.env
+User=pi
+
+[Install]
+WantedBy=multi-user.target

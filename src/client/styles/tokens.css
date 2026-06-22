@@ -1,0 +1,26 @@
+:root {
+  --bg: #0d1117;
+  --bg-card: #161b22;
+  --bg-card-hover: #1c2128;
+  --border: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-meta: #656d76;
+
+  --success: #3fb950;
+  --failure: #f85149;
+  --pending: #d29922;
+  --neutral: #484f58;
+
+  --approved-bg: #1a3a2a;
+  --approved-text: #3fb950;
+  --changes-bg: #3a1a1a;
+  --changes-text: #f85149;
+  --pending-bg: #2a2a1a;
+  --pending-text: #d29922;
+
+  --commented-bg: #1a2a3a;
+  --commented-text: #58a6ff;
+  --new-commit-color: #d2a8ff;
+  --unresolved-color: #e3a84e;
+}
