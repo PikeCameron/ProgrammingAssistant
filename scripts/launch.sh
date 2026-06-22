@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+export DISPLAY="${DISPLAY:-:0}"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG="/tmp/pr-dashboard-launch.log"
