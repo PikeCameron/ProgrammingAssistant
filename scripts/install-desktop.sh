@@ -9,12 +9,11 @@ DESKTOP_FILE="$HOME/Desktop/pr-dashboard.desktop"
 cat > "$DESKTOP_FILE" << EOF
 [Desktop Entry]
 Version=1.0
-Name=PR Dashboard
-Comment=GitHub PR Review Dashboard
-Exec=$PROJECT_DIR/scripts/launch.sh
-Terminal=false
 Type=Application
-Categories=Development;
+Name=PR Dashboard
+Comment=Launch PR Dashboard
+Exec=lxterminal -e bash -c '$PROJECT_DIR/scripts/launch.sh'
+Terminal=false
 StartupNotify=false
 EOF
 
