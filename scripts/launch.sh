@@ -43,3 +43,4 @@ echo "opening $CHROMIUM..."
   --noerrdialogs \
   --disable-gpu \
   &
+disown
