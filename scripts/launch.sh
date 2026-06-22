@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
-export DISPLAY="${DISPLAY:-:0}"
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/1000}"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG="/tmp/pr-dashboard-launch.log"
@@ -40,6 +41,7 @@ pkill chromium 2>/dev/null; sleep 1
 rm -rf /tmp/pr-dashboard-browser 2>/dev/null
 echo "opening $CHROMIUM..."
 "$CHROMIUM" \
+  --ozone-platform=wayland \
   --app=http://localhost:3000 \
   --user-data-dir=/tmp/pr-dashboard-browser \
   --disable-infobars \
