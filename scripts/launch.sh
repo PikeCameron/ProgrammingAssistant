@@ -19,9 +19,10 @@ elif systemctl list-unit-files pr-dashboard.service &>/dev/null; then
   sleep 2
 else
   echo "starting node directly..."
-  cd "$PROJECT_DIR"
-  nohup node dist/server/index.js >> /tmp/pr-dashboard.log 2>&1 &
-  sleep 2
+  echo "PROJECT_DIR=$PROJECT_DIR"
+  nohup node "$PROJECT_DIR/dist/server/index.js" >> /tmp/pr-dashboard.log 2>&1 &
+  disown
+  sleep 3
 fi
 
 # Find the chromium binary
