@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG="/tmp/pr-dashboard-launch.log"
 
 exec >> "$LOG" 2>&1
 echo "--- launch $(date) ---"
+echo "PATH=$PATH"
+echo "DISPLAY=$DISPLAY"
 
 # Start the server if not already running
 if systemctl is-active --quiet pr-dashboard 2>/dev/null; then
