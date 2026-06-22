@@ -36,6 +36,8 @@ else
   exit 1
 fi
 
+pkill chromium 2>/dev/null; sleep 1
+rm -rf /tmp/pr-dashboard-browser 2>/dev/null
 echo "opening $CHROMIUM..."
 "$CHROMIUM" \
   --app=http://localhost:3000 \
