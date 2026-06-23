@@ -1,9 +1,14 @@
 import { useRef, useState } from 'react';
 
 const THRESHOLD = 80;
+const DIRECTION_LOCK = 8; // px of movement before we commit to a direction
+
+type Direction = 'horizontal' | 'vertical' | null;
 
 export function useSwipeToClear(onClear: (() => void) | undefined, enabled: boolean, onTap?: () => void) {
   const startX = useRef<number | null>(null);
+  const startY = useRef<number | null>(null);
+  const direction = useRef<Direction>(null);
   const maxDragX = useRef(0);
   const [dragX, setDragX] = useState(0);
   const [dragging, setDragging] = useState(false);
@@ -11,25 +16,37 @@ export function useSwipeToClear(onClear: (() => void) | undefined, enabled: bool
 
   function onTouchStart(e: React.TouchEvent) {
     startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+    direction.current = null;
     maxDragX.current = 0;
-    setDragging(true);
+    // Don't set dragging yet — wait until we know the gesture direction
   }
 
   function onTouchMove(e: React.TouchEvent) {
-    if (startX.current === null) return;
-    const delta = e.touches[0].clientX - startX.current;
-    if (delta < 0) {
-      const clamped = Math.max(delta, -160);
+    if (startX.current === null || startY.current === null) return;
+    const dx = e.touches[0].clientX - startX.current;
+    const dy = e.touches[0].clientY - startY.current;
+
+    if (direction.current === null) {
+      if (Math.abs(dx) < DIRECTION_LOCK && Math.abs(dy) < DIRECTION_LOCK) return;
+      direction.current = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical';
+      if (direction.current === 'horizontal') setDragging(true);
+    }
+
+    if (direction.current !== 'horizontal') return;
+
+    if (dx < 0) {
+      const clamped = Math.max(dx, -160);
       setDragX(clamped);
       maxDragX.current = Math.min(maxDragX.current, clamped);
     }
   }
 
   function onTouchEnd() {
-    const wasTap = Math.abs(maxDragX.current) < 10;
+    const wasTap = direction.current === null;
     if (wasTap) {
       onTap?.();
-    } else if (dragX < -THRESHOLD && onClear && enabled) {
+    } else if (direction.current === 'horizontal' && dragX < -THRESHOLD && onClear && enabled) {
       onClear();
       setFlashing(true);
       setTimeout(() => setFlashing(false), 350);
@@ -37,6 +54,8 @@ export function useSwipeToClear(onClear: (() => void) | undefined, enabled: bool
     setDragX(0);
     setDragging(false);
     startX.current = null;
+    startY.current = null;
+    direction.current = null;
     maxDragX.current = 0;
   }
 
