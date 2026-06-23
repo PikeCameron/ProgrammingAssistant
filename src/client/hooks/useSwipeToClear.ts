@@ -8,16 +8,13 @@ type Direction = 'horizontal' | 'vertical' | null;
 export function useSwipeToClear(
   onClear: (() => void) | undefined,
   enabled: boolean,
-  onTap?: () => void,
 ) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const onClearRef = useRef(onClear);
   const enabledRef = useRef(enabled);
-  const onTapRef = useRef(onTap);
   onClearRef.current = onClear;
   enabledRef.current = enabled;
-  onTapRef.current = onTap;
 
   const isDown = useRef(false);
   const startX = useRef(0);
@@ -53,9 +50,8 @@ export function useSwipeToClear(
         if (directionRef.current === 'horizontal') setDragging(true);
       }
 
-      if (directionRef.current === 'vertical') return; // bubble up to list scroll handler
+      if (directionRef.current === 'vertical') return;
 
-      // Horizontal — stop propagation so the list doesn't also scroll
       e.stopPropagation();
       if (dx < 0) {
         const clamped = Math.max(dx, -160);
@@ -66,12 +62,9 @@ export function useSwipeToClear(
 
     function handlePointerUp(e: PointerEvent) {
       if (!e.isPrimary) return;
-      const wasTap = directionRef.current === null;
       isDown.current = false;
 
-      if (wasTap) {
-        onTapRef.current?.();
-      } else if (
+      if (
         directionRef.current === 'horizontal' &&
         dragXRef.current < -THRESHOLD &&
         enabledRef.current

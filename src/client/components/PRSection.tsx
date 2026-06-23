@@ -7,10 +7,10 @@ interface Props {
   prs: PullRequest[];
   getNotifications?: (pr: PullRequest) => CardNotification[];
   onClearNotifications?: (pr: PullRequest) => void;
-  onTapPR?: (pr: PullRequest) => void;
+  onDetailPR?: (pr: PullRequest) => void;
 }
 
-export function PRSection({ title, prs, getNotifications, onClearNotifications, onTapPR }: Props) {
+export function PRSection({ title, prs, getNotifications, onClearNotifications, onDetailPR }: Props) {
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function PRSection({ title, prs, getNotifications, onClearNotifications, 
               pr={pr}
               notifications={getNotifications?.(pr)}
               onClearNotifications={onClearNotifications ? () => onClearNotifications(pr) : undefined}
-              onTap={onTapPR ? () => onTapPR(pr) : undefined}
+              onDetail={onDetailPR ? () => onDetailPR(pr) : undefined}
             />
           ))
         )}

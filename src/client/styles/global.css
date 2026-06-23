@@ -144,6 +144,23 @@ html, body, #root {
   min-width: 0;
 }
 
+.pr-card__detail-btn {
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--text-meta);
+  font-size: 15px;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 12px;
+}
+
 .pr-card__content {
   display: flex;
   flex-direction: column;

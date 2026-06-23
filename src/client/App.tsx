@@ -39,14 +39,14 @@ export function App() {
           prs={data?.reviewRequests ?? []}
           getNotifications={getNotifications}
           onClearNotifications={handleClear}
-          onTapPR={setSelectedPR}
+          onDetailPR={setSelectedPR}
         />
         <PRSection
           title="My PRs"
           prs={data?.myPRs ?? []}
           getNotifications={getNotifications}
           onClearNotifications={handleClear}
-          onTapPR={setSelectedPR}
+          onDetailPR={setSelectedPR}
         />
       </div>
       {selectedPR && (
