@@ -12,9 +12,9 @@ Version=1.0
 Type=Application
 Name=PR Dashboard
 Comment=Launch PR Dashboard
-Exec=lxterminal -e bash -c '$PROJECT_DIR/scripts/launch.sh'
+Exec=lxterminal -e bash -c 'bash $PROJECT_DIR/scripts/launch.sh'
+Icon=applications-internet
 Terminal=false
-StartupNotify=false
 EOF
 
 chmod +x "$DESKTOP_FILE"
