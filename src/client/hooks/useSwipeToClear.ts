@@ -12,7 +12,6 @@ export function useSwipeToClear(
 ) {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Keep latest callbacks in refs so the effect closure never goes stale
   const onClearRef = useRef(onClear);
   const enabledRef = useRef(enabled);
   const onTapRef = useRef(onTap);
@@ -22,6 +21,7 @@ export function useSwipeToClear(
 
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
+  const lastY = useRef(0);
   const directionRef = useRef<Direction>(null);
   const dragXRef = useRef(0);
 
@@ -33,9 +33,14 @@ export function useSwipeToClear(
     const el = cardRef.current;
     if (!el) return;
 
+    function getScrollContainer(): HTMLElement | null {
+      return el.closest('.pr-section__list') as HTMLElement | null;
+    }
+
     function handleTouchStart(e: TouchEvent) {
       startX.current = e.touches[0].clientX;
       startY.current = e.touches[0].clientY;
+      lastY.current = e.touches[0].clientY;
       directionRef.current = null;
       dragXRef.current = 0;
     }
@@ -51,7 +56,13 @@ export function useSwipeToClear(
         if (directionRef.current === 'horizontal') setDragging(true);
       }
 
-      if (directionRef.current !== 'horizontal') return;
+      if (directionRef.current === 'vertical') {
+        const currentY = e.touches[0].clientY;
+        const list = getScrollContainer();
+        if (list) list.scrollTop += lastY.current - currentY;
+        lastY.current = currentY;
+        return;
+      }
 
       if (dx < 0) {
         const clamped = Math.max(dx, -160);
@@ -81,7 +92,6 @@ export function useSwipeToClear(
       directionRef.current = null;
     }
 
-    // passive: true lets the browser scroll without waiting for JS
     el.addEventListener('touchstart', handleTouchStart, { passive: true });
     el.addEventListener('touchmove', handleTouchMove, { passive: true });
     el.addEventListener('touchend', handleTouchEnd, { passive: true });
@@ -91,9 +101,9 @@ export function useSwipeToClear(
       el.removeEventListener('touchmove', handleTouchMove);
       el.removeEventListener('touchend', handleTouchEnd);
     };
-  }, []); // empty deps — callbacks accessed via refs
+  }, []);
 
-  // Mouse equivalents for desktop testing (React synthetic events are fine here)
+  // Mouse equivalents for desktop testing
   const mouseStartX = useRef<number | null>(null);
   const mouseMaxDrag = useRef(0);
 
