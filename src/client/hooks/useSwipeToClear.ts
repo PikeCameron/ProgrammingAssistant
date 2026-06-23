@@ -21,7 +21,6 @@ export function useSwipeToClear(
 
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
-  const lastY = useRef(0);
   const directionRef = useRef<Direction>(null);
   const dragXRef = useRef(0);
 
@@ -33,14 +32,9 @@ export function useSwipeToClear(
     const el = cardRef.current;
     if (!el) return;
 
-    function getScrollContainer(): HTMLElement | null {
-      return el.closest('.pr-section__list') as HTMLElement | null;
-    }
-
     function handleTouchStart(e: TouchEvent) {
       startX.current = e.touches[0].clientX;
       startY.current = e.touches[0].clientY;
-      lastY.current = e.touches[0].clientY;
       directionRef.current = null;
       dragXRef.current = 0;
     }
@@ -56,14 +50,10 @@ export function useSwipeToClear(
         if (directionRef.current === 'horizontal') setDragging(true);
       }
 
-      if (directionRef.current === 'vertical') {
-        const currentY = e.touches[0].clientY;
-        const list = getScrollContainer();
-        if (list) list.scrollTop += lastY.current - currentY;
-        lastY.current = currentY;
-        return;
-      }
+      if (directionRef.current === 'vertical') return; // let list handler scroll
 
+      // Horizontal swipe — stop propagation so the list doesn't also scroll
+      e.stopPropagation();
       if (dx < 0) {
         const clamped = Math.max(dx, -160);
         dragXRef.current = clamped;
