@@ -146,19 +146,25 @@ html, body, #root {
 
 .pr-card__detail-btn {
   flex-shrink: 0;
-  align-self: stretch;
-  width: 36px;
+  align-self: center;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
+  background: var(--border);
   border: none;
-  border-right: 1px solid var(--border);
-  color: var(--text-meta);
-  font-size: 15px;
+  border-radius: 7px;
+  color: var(--text-secondary);
+  font-size: 14px;
   cursor: pointer;
   padding: 0;
-  margin-right: 12px;
+  margin-right: 10px;
+  transition: background 0.15s;
+}
+
+.pr-card__detail-btn:active {
+  background: var(--bg-card-hover);
 }
 
 .pr-card__content {
