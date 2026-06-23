@@ -36,10 +36,10 @@ const DECISION_CLASS: Record<NonNullable<ReviewDecision>, string> = {
 
 export function PRCard({ pr, notifications = [], onClearNotifications, onTap }: Props) {
   const hasNotifications = notifications.length > 0;
-  const { dragX, dragging, flashing, progress, handlers } = useSwipeToClear(onClearNotifications, hasNotifications, onTap);
+  const { cardRef, dragX, dragging, flashing, progress, mouseHandlers } = useSwipeToClear(onClearNotifications, hasNotifications, onTap);
 
   return (
-    <div className={`pr-card${pr.isDraft ? ' pr-card--draft' : ''}`} {...handlers}>
+    <div className={`pr-card${pr.isDraft ? ' pr-card--draft' : ''}`} ref={cardRef} {...mouseHandlers}>
       {hasNotifications && (
         <div className="pr-card__swipe-bg" style={{ opacity: progress }}>
           <span className="pr-card__swipe-label">Clear</span>
