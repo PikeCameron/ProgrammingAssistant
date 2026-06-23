@@ -12,7 +12,7 @@ Version=1.0
 Type=Application
 Name=PR Dashboard
 Comment=Launch PR Dashboard
-Exec=chromium --ozone-platform=wayland --kiosk http://localhost:3000 --user-data-dir=/tmp/pr-dashboard-browser --disable-infobars --noerrdialogs
+Exec=lxterminal -e bash -c '$PROJECT_DIR/scripts/launch.sh'
 Terminal=false
 StartupNotify=false
 EOF
