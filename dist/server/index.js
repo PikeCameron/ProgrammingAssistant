@@ -5,10 +5,13 @@ import { config } from './config.js';
 import { startPoller } from './poller.js';
 import { apiRouter } from './routes/api.js';
 import { sseRouter } from './routes/sse.js';
+import { reviewRouter } from './routes/review.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
+app.use(express.json());
 app.use('/api', apiRouter);
 app.use('/api', sseRouter);
+app.use('/api/review', reviewRouter);
 // Serve built client in production
 const clientDist = path.join(__dirname, '../../dist/client');
 app.use(express.static(clientDist));

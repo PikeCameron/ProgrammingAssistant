@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { PullRequest, ReviewDecision } from '@shared/types';
 import type { CardNotification } from './PRCard';
 
@@ -6,6 +7,8 @@ interface Props {
   notifications: CardNotification[];
   onClose: () => void;
 }
+
+type ReviewState = 'idle' | 'loading' | 'done' | 'error';
 
 const DECISION_LABEL: Record<NonNullable<ReviewDecision>, string> = {
   approved: 'APPROVED',
@@ -27,6 +30,30 @@ function fullDate(iso: string): string {
 }
 
 export function PRDetail({ pr, notifications, onClose }: Props) {
+  const [reviewState, setReviewState] = useState<ReviewState>('idle');
+
+  async function handleReview() {
+    setReviewState('loading');
+    const [owner, repo] = pr.repoName.split('/');
+    try {
+      const res = await fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ owner, repo, number: pr.number, title: pr.title }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setReviewState('done');
+    } catch {
+      setReviewState('error');
+    }
+  }
+
+  const reviewLabel =
+    reviewState === 'loading' ? 'Reviewing…' :
+    reviewState === 'done'    ? '✓ Review sent' :
+    reviewState === 'error'   ? 'Failed — retry' :
+    'Review with Claude';
+
   return (
     <div className="pr-detail-overlay" onMouseDown={onClose} onTouchStart={onClose}>
       <div
@@ -74,6 +101,17 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
               </div>
             ))
           )}
+        </div>
+
+        <div className="pr-detail__actions">
+          <button
+            className={`pr-detail__review-btn${reviewState === 'done' ? ' pr-detail__review-btn--done' : ''}${reviewState === 'error' ? ' pr-detail__review-btn--error' : ''}`}
+            onClick={handleReview}
+            disabled={reviewState === 'loading' || reviewState === 'done'}
+          >
+            {reviewState === 'loading' && <span className="pr-detail__spinner" />}
+            {reviewLabel}
+          </button>
         </div>
       </div>
     </div>
