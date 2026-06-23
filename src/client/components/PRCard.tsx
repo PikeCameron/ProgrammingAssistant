@@ -53,9 +53,7 @@ export function PRCard({ pr, notifications = [], onClearNotifications, onDetail 
         }}
       >
         <div className="pr-card__body">
-          <button className="pr-card__detail-btn" onClick={onDetail} aria-label="View details">
-            ℹ
-          </button>
+          <button className="pr-card__detail-btn" onClick={onDetail} aria-label="View details" />
           <div className="pr-card__content">
             <div className="pr-card__top">
               <span className="pr-card__title">{pr.title}</span>
