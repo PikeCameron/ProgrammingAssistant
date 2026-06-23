@@ -40,6 +40,7 @@ pkill chromium 2>/dev/null; sleep 1
 rm -rf /tmp/pr-dashboard-browser 2>/dev/null
 echo "opening $CHROMIUM..."
 setsid "$CHROMIUM" \
+  --no-gl-override \
   --kiosk http://localhost:3000 \
   --user-data-dir=/tmp/pr-dashboard-browser \
   --disable-infobars \
