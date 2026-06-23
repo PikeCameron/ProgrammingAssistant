@@ -39,10 +39,10 @@ fi
 pkill chromium 2>/dev/null; sleep 1
 rm -rf /tmp/pr-dashboard-browser 2>/dev/null
 echo "opening $CHROMIUM..."
-"$CHROMIUM" \
+setsid "$CHROMIUM" \
   --kiosk http://localhost:3000 \
   --user-data-dir=/tmp/pr-dashboard-browser \
   --disable-infobars \
   --noerrdialogs \
-  &
+  > /tmp/chromium.log 2>&1 &
 disown
