@@ -43,8 +43,11 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
           {pr.repoName} &nbsp;·&nbsp; #{pr.number} &nbsp;·&nbsp; {pr.author} &nbsp;·&nbsp; opened {fullDate(pr.createdAt)}
         </div>
 
-        {(pr.hasUserCommented || pr.reviewDecision) && (
+        {(pr.isDraft || pr.hasUserCommented || pr.reviewDecision) && (
           <div className="pr-detail__tags">
+            {pr.isDraft && (
+              <span className="chip chip--draft">DRAFT</span>
+            )}
             {pr.hasUserCommented && (
               <span className="chip chip--commented">You commented</span>
             )}

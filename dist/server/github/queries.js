@@ -7,6 +7,7 @@ export const DASHBOARD_QUERY = `
           number
           title
           url
+          isDraft
           author { login }
           createdAt
           repository { nameWithOwner }
@@ -36,6 +37,7 @@ export const DASHBOARD_QUERY = `
           number
           title
           url
+          isDraft
           author { login }
           createdAt
           repository { nameWithOwner }

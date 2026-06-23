@@ -9,6 +9,7 @@ export interface PullRequest {
   author: string;
   repoName: string;
   createdAt: string;
+  isDraft: boolean;
   checkStatus: CheckStatus;
   reviewDecision: ReviewDecision;
   unresolvedThreads: number;

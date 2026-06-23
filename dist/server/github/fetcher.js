@@ -40,6 +40,7 @@ function mapPR(raw, login) {
         author: raw.author?.login ?? 'unknown',
         repoName: raw.repository.nameWithOwner,
         createdAt: raw.createdAt,
+        isDraft: raw.isDraft,
         checkStatus: toCheckStatus(commit?.statusCheckRollup?.state),
         reviewDecision: toReviewDecision(raw.reviewDecision),
         unresolvedThreads,

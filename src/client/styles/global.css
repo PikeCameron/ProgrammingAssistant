@@ -223,6 +223,15 @@ html, body, #root {
 .chip--changes   { background: var(--changes-bg);   color: var(--changes-text); }
 .chip--pending   { background: var(--pending-bg);   color: var(--pending-text); }
 .chip--commented { background: var(--commented-bg); color: var(--commented-text); }
+.chip--draft     { background: var(--border);       color: var(--text-meta); }
+
+/* Draft card dimming */
+.pr-card--draft .pr-card__title {
+  opacity: 0.55;
+}
+.pr-card--draft .pr-card__meta {
+  opacity: 0.55;
+}
 
 
 /* ── Footer ── */
