@@ -19,8 +19,9 @@ export function useSwipeToClear(
   enabledRef.current = enabled;
   onTapRef.current = onTap;
 
-  const startX = useRef<number | null>(null);
-  const startY = useRef<number | null>(null);
+  const isDown = useRef(false);
+  const startX = useRef(0);
+  const startY = useRef(0);
   const directionRef = useRef<Direction>(null);
   const dragXRef = useRef(0);
 
@@ -32,17 +33,19 @@ export function useSwipeToClear(
     const el = cardRef.current;
     if (!el) return;
 
-    function handleTouchStart(e: TouchEvent) {
-      startX.current = e.touches[0].clientX;
-      startY.current = e.touches[0].clientY;
+    function handlePointerDown(e: PointerEvent) {
+      if (!e.isPrimary) return;
+      isDown.current = true;
+      startX.current = e.clientX;
+      startY.current = e.clientY;
       directionRef.current = null;
       dragXRef.current = 0;
     }
 
-    function handleTouchMove(e: TouchEvent) {
-      if (startX.current === null || startY.current === null) return;
-      const dx = e.touches[0].clientX - startX.current;
-      const dy = e.touches[0].clientY - startY.current;
+    function handlePointerMove(e: PointerEvent) {
+      if (!isDown.current || !e.isPrimary) return;
+      const dx = e.clientX - startX.current;
+      const dy = e.clientY - startY.current;
 
       if (directionRef.current === null) {
         if (Math.abs(dx) < DIRECTION_LOCK && Math.abs(dy) < DIRECTION_LOCK) return;
@@ -50,9 +53,9 @@ export function useSwipeToClear(
         if (directionRef.current === 'horizontal') setDragging(true);
       }
 
-      if (directionRef.current === 'vertical') return; // let list handler scroll
+      if (directionRef.current === 'vertical') return; // bubble up to list scroll handler
 
-      // Horizontal swipe — stop propagation so the list doesn't also scroll
+      // Horizontal — stop propagation so the list doesn't also scroll
       e.stopPropagation();
       if (dx < 0) {
         const clamped = Math.max(dx, -160);
@@ -61,8 +64,11 @@ export function useSwipeToClear(
       }
     }
 
-    function handleTouchEnd() {
+    function handlePointerUp(e: PointerEvent) {
+      if (!e.isPrimary) return;
       const wasTap = directionRef.current === null;
+      isDown.current = false;
+
       if (wasTap) {
         onTapRef.current?.();
       } else if (
@@ -74,66 +80,27 @@ export function useSwipeToClear(
         setFlashing(true);
         setTimeout(() => setFlashing(false), 350);
       }
+
       dragXRef.current = 0;
       setDragX(0);
       setDragging(false);
-      startX.current = null;
-      startY.current = null;
       directionRef.current = null;
     }
 
-    el.addEventListener('touchstart', handleTouchStart, { passive: true });
-    el.addEventListener('touchmove', handleTouchMove, { passive: true });
-    el.addEventListener('touchend', handleTouchEnd, { passive: true });
+    el.addEventListener('pointerdown', handlePointerDown, { passive: true });
+    el.addEventListener('pointermove', handlePointerMove, { passive: true });
+    el.addEventListener('pointerup', handlePointerUp, { passive: true });
+    el.addEventListener('pointercancel', handlePointerUp, { passive: true });
 
     return () => {
-      el.removeEventListener('touchstart', handleTouchStart);
-      el.removeEventListener('touchmove', handleTouchMove);
-      el.removeEventListener('touchend', handleTouchEnd);
+      el.removeEventListener('pointerdown', handlePointerDown);
+      el.removeEventListener('pointermove', handlePointerMove);
+      el.removeEventListener('pointerup', handlePointerUp);
+      el.removeEventListener('pointercancel', handlePointerUp);
     };
   }, []);
 
-  // Mouse equivalents for desktop testing
-  const mouseStartX = useRef<number | null>(null);
-  const mouseMaxDrag = useRef(0);
-
-  function onMouseDown(e: React.MouseEvent) {
-    mouseStartX.current = e.clientX;
-    mouseMaxDrag.current = 0;
-  }
-
-  function onMouseMove(e: React.MouseEvent) {
-    if (mouseStartX.current === null) return;
-    const delta = e.clientX - mouseStartX.current;
-    if (delta < 0) {
-      const clamped = Math.max(delta, -160);
-      setDragX(clamped);
-      mouseMaxDrag.current = Math.min(mouseMaxDrag.current, clamped);
-    }
-  }
-
-  function onMouseUp() {
-    const wasTap = Math.abs(mouseMaxDrag.current) < 10;
-    if (wasTap) {
-      onTapRef.current?.();
-    } else if (dragX < -THRESHOLD && enabledRef.current) {
-      onClearRef.current?.();
-      setFlashing(true);
-      setTimeout(() => setFlashing(false), 350);
-    }
-    setDragX(0);
-    mouseStartX.current = null;
-    mouseMaxDrag.current = 0;
-  }
-
   const progress = Math.min(1, Math.abs(dragX) / THRESHOLD);
 
-  return {
-    cardRef,
-    dragX,
-    dragging,
-    flashing,
-    progress,
-    mouseHandlers: { onMouseDown, onMouseMove, onMouseUp },
-  };
+  return { cardRef, dragX, dragging, flashing, progress };
 }

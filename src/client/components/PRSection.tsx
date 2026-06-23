@@ -18,23 +18,36 @@ export function PRSection({ title, prs, getNotifications, onClearNotifications, 
     if (!list) return;
 
     let lastY = 0;
+    let isDown = false;
 
-    function onTouchStart(e: TouchEvent) {
-      lastY = e.touches[0].clientY;
+    function onPointerDown(e: PointerEvent) {
+      if (!e.isPrimary) return;
+      isDown = true;
+      lastY = e.clientY;
     }
 
-    function onTouchMove(e: TouchEvent) {
-      const currentY = e.touches[0].clientY;
+    function onPointerMove(e: PointerEvent) {
+      if (!isDown || !e.isPrimary) return;
+      const currentY = e.clientY;
       list.scrollTop += lastY - currentY;
       lastY = currentY;
     }
 
-    list.addEventListener('touchstart', onTouchStart, { passive: true });
-    list.addEventListener('touchmove', onTouchMove, { passive: true });
+    function onPointerUp(e: PointerEvent) {
+      if (!e.isPrimary) return;
+      isDown = false;
+    }
+
+    list.addEventListener('pointerdown', onPointerDown, { passive: true });
+    list.addEventListener('pointermove', onPointerMove, { passive: true });
+    list.addEventListener('pointerup', onPointerUp, { passive: true });
+    list.addEventListener('pointercancel', onPointerUp, { passive: true });
 
     return () => {
-      list.removeEventListener('touchstart', onTouchStart);
-      list.removeEventListener('touchmove', onTouchMove);
+      list.removeEventListener('pointerdown', onPointerDown);
+      list.removeEventListener('pointermove', onPointerMove);
+      list.removeEventListener('pointerup', onPointerUp);
+      list.removeEventListener('pointercancel', onPointerUp);
     };
   }, []);
 
