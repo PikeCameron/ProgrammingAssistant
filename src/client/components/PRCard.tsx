@@ -10,6 +10,7 @@ interface Props {
   pr: PullRequest;
   notifications?: CardNotification[];
   onClearNotifications?: () => void;
+  onTap?: () => void;
 }
 
 function relativeAge(iso: string): string {
@@ -33,9 +34,9 @@ const DECISION_CLASS: Record<NonNullable<ReviewDecision>, string> = {
   review_required: 'chip chip--pending',
 };
 
-export function PRCard({ pr, notifications = [], onClearNotifications }: Props) {
+export function PRCard({ pr, notifications = [], onClearNotifications, onTap }: Props) {
   const hasNotifications = notifications.length > 0;
-  const { dragX, dragging, flashing, progress, handlers } = useSwipeToClear(onClearNotifications, hasNotifications);
+  const { dragX, dragging, flashing, progress, handlers } = useSwipeToClear(onClearNotifications, hasNotifications, onTap);
 
   return (
     <div className="pr-card" {...handlers}>

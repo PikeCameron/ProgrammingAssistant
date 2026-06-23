@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import type { PullRequest } from '@shared/types';
 import { useDashboard } from './hooks/useDashboard';
 import { useClearedComments } from './hooks/useClearedComments';
 import { useClearedNewCommits } from './hooks/useClearedNewCommits';
 import { PRSection } from './components/PRSection';
+import { PRDetail } from './components/PRDetail';
 import type { CardNotification } from './components/PRCard';
 
 function formatTime(iso: string): string {
@@ -13,6 +15,7 @@ export function App() {
   const { data, connected } = useDashboard();
   const { visibleCount, clearPR: clearComments } = useClearedComments();
   const { showNewCommitAlert, clearPR: clearNewCommit } = useClearedNewCommits();
+  const [selectedPR, setSelectedPR] = useState<PullRequest | null>(null);
 
   function getNotifications(pr: PullRequest): CardNotification[] {
     const notes: CardNotification[] = [];
@@ -36,14 +39,23 @@ export function App() {
           prs={data?.reviewRequests ?? []}
           getNotifications={getNotifications}
           onClearNotifications={handleClear}
+          onTapPR={setSelectedPR}
         />
         <PRSection
           title="My PRs"
           prs={data?.myPRs ?? []}
           getNotifications={getNotifications}
           onClearNotifications={handleClear}
+          onTapPR={setSelectedPR}
         />
       </div>
+      {selectedPR && (
+        <PRDetail
+          pr={selectedPR}
+          notifications={getNotifications(selectedPR)}
+          onClose={() => setSelectedPR(null)}
+        />
+      )}
       <div className="footer">
         <span className={`status-dot ${connected ? 'status-dot--on' : 'status-dot--off'}`} />
         {data ? (

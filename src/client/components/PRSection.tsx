@@ -6,9 +6,10 @@ interface Props {
   prs: PullRequest[];
   getNotifications?: (pr: PullRequest) => CardNotification[];
   onClearNotifications?: (pr: PullRequest) => void;
+  onTapPR?: (pr: PullRequest) => void;
 }
 
-export function PRSection({ title, prs, getNotifications, onClearNotifications }: Props) {
+export function PRSection({ title, prs, getNotifications, onClearNotifications, onTapPR }: Props) {
   return (
     <div className="pr-section">
       <div className="pr-section__header">
@@ -25,6 +26,7 @@ export function PRSection({ title, prs, getNotifications, onClearNotifications }
               pr={pr}
               notifications={getNotifications?.(pr)}
               onClearNotifications={onClearNotifications ? () => onClearNotifications(pr) : undefined}
+              onTap={onTapPR ? () => onTapPR(pr) : undefined}
             />
           ))
         )}

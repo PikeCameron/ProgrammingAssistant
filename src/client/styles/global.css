@@ -250,6 +250,95 @@ html, body, #root {
 .status-dot--on  { background: var(--success); }
 .status-dot--off { background: var(--failure); }
 
+/* ── PR Detail Modal ── */
+
+.pr-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.pr-detail {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 680px;
+  max-width: calc(100vw - 32px);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pr-detail__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pr-detail__title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.pr-detail__close {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: var(--border);
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pr-detail__meta {
+  font-size: 12px;
+  color: var(--text-meta);
+}
+
+.pr-detail__tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pr-detail__notifs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+.pr-detail__notif-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pr-detail__notif-text {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.pr-detail__notif-empty {
+  font-size: 13px;
+  color: var(--text-meta);
+  padding-top: 4px;
+}
+
 /* ── Offline overlay ── */
 
 .offline-overlay {
