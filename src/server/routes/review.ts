@@ -27,7 +27,7 @@ function runClaude(prompt: string): Promise<string> {
       '-o', 'BatchMode=yes',
       '-o', 'ConnectTimeout=10',
       `${macSshUser}@${macSshHost}`,
-      'zsh -l -c "claude --print"',
+      'zsh -c "source ~/.nvm/nvm.sh && claude --print"',
     ], {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
