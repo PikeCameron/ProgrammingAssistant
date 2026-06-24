@@ -22,7 +22,7 @@ function runClaude(prompt) {
             '-o', 'BatchMode=yes',
             '-o', 'ConnectTimeout=10',
             `${macSshUser}@${macSshHost}`,
-            'bash -l -c "claude --print"',
+            'zsh -l -c "claude --print"',
         ], {
             stdio: ['pipe', 'pipe', 'pipe'],
         });
