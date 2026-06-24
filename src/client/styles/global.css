@@ -301,10 +301,23 @@ html, body, #root {
   border-radius: 10px;
   width: 680px;
   max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 40px);
   padding: 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  overflow: hidden;
+}
+
+.pr-detail__notifs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .pr-detail__header {
@@ -345,14 +358,6 @@ html, body, #root {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-}
-
-.pr-detail__notifs {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 4px;
-  border-top: 1px solid var(--border);
 }
 
 .pr-detail__notif-row {
