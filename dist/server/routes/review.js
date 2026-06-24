@@ -12,10 +12,19 @@ const mailer = nodemailer.createTransport({
 const MAX_DIFF_CHARS = 80_000;
 const CLAUDE_TIMEOUT_MS = 3 * 60 * 1000; // 3 minutes
 function runClaude(prompt) {
+    const { macSshUser, macSshHost } = config;
+    if (!macSshUser || !macSshHost) {
+        return Promise.reject(new Error('MAC_SSH_USER and MAC_SSH_HOST must be set in .env'));
+    }
     return new Promise((resolve, reject) => {
-        const proc = spawn('claude', ['--print'], {
+        // SSH to Mac and run claude there; -l loads login shell so claude is in PATH
+        const proc = spawn('ssh', [
+            '-o', 'BatchMode=yes',
+            '-o', 'ConnectTimeout=10',
+            `${macSshUser}@${macSshHost}`,
+            'bash -l -c "claude --print"',
+        ], {
             stdio: ['pipe', 'pipe', 'pipe'],
-            env: process.env,
         });
         let stdout = '';
         let stderr = '';
@@ -30,11 +39,11 @@ function runClaude(prompt) {
             if (code === 0)
                 resolve(stdout.trim());
             else
-                reject(new Error(`claude exited ${code}: ${stderr.slice(0, 500)}`));
+                reject(new Error(`SSH/claude exited ${code}: ${stderr.slice(0, 500)}`));
         });
         proc.on('error', (err) => {
             clearTimeout(timer);
-            reject(new Error(`Failed to spawn claude: ${err.message}. Is Claude Code installed? Run: npm install -g @anthropic-ai/claude-code`));
+            reject(new Error(`SSH failed: ${err.message}`));
         });
         proc.stdin.write(prompt);
         proc.stdin.end();

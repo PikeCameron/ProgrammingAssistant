@@ -18,4 +18,6 @@ export const config = {
     smtpPass: require('SMTP_PASS'),
     smtpFrom: process.env['SMTP_FROM'] ?? process.env['SMTP_USER'] ?? '',
     reviewToEmail: process.env['REVIEW_TO_EMAIL'] ?? 'cameron@getmobly.com',
+    macSshUser: process.env['MAC_SSH_USER'] ?? '',
+    macSshHost: process.env['MAC_SSH_HOST'] ?? '',
 };
