@@ -11,7 +11,6 @@ export const config = {
     githubRepo: process.env['GITHUB_REPO'] ?? '',
     pollIntervalMs: parseInt(process.env['POLL_INTERVAL_MS'] ?? '60000', 10),
     port: parseInt(process.env['PORT'] ?? '3000', 10),
-    anthropicApiKey: require('ANTHROPIC_API_KEY'),
     smtpHost: require('SMTP_HOST'),
     smtpPort: parseInt(process.env['SMTP_PORT'] ?? '587', 10),
     smtpSecure: process.env['SMTP_SECURE'] === 'true',
