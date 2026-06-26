@@ -77,6 +77,8 @@ PR: ${title} (#${number})
 Repository: ${owner}/${repo}
 ${hasCheckout ? 'The repository is checked out at this PR branch — use your file reading tools to explore the codebase for full context.' : ''}${truncated ? '\nNote: the diff was truncated due to size.' : ''}
 
+When referencing specific code, always cite the exact location as \`path/to/file.ts:42\` (file path and line number). Every issue, observation, or suggestion must link to the line it refers to.
+
 Structure your review as:
 **Summary** — what does this PR do?
 **Issues** — bugs, edge cases, logic errors (if any)
