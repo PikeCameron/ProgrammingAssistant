@@ -1,15 +1,25 @@
 import { Router } from 'express';
-import nodemailer from 'nodemailer';
 import { config } from '../config.js';
 
 export const reviewRouter = Router();
 
-const mailer = nodemailer.createTransport({
-  host: config.smtpHost,
-  port: config.smtpPort,
-  secure: config.smtpSecure,
-  auth: { user: config.smtpUser, pass: config.smtpPass },
-});
+async function sendEmail(subject: string, text: string, html: string): Promise<void> {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${config.resendApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: config.emailFrom,
+      to: [config.reviewToEmail],
+      subject,
+      text,
+      html,
+    }),
+  });
+  if (!res.ok) throw new Error(`Resend error ${res.status}: ${await res.text()}`);
+}
 
 const MAX_DIFF_CHARS = 80_000;
 const CLAUDE_TIMEOUT_MS = 3 * 60 * 1000;
@@ -77,16 +87,14 @@ ${diff}
 
   const reviewText = await runClaude(prompt);
 
-  await mailer.sendMail({
-    from: config.smtpFrom,
-    to: config.reviewToEmail,
-    subject: `PR Review: ${title} (#${number})`,
-    text: `PR Review — ${owner}/${repo} #${number}\n${title}\n\n${reviewText}`,
-    html: `<h2>${title} <small style="color:#666">#${number}</small></h2>
+  await sendEmail(
+    `PR Review: ${title} (#${number})`,
+    `PR Review — ${owner}/${repo} #${number}\n${title}\n\n${reviewText}`,
+    `<h2>${title} <small style="color:#666">#${number}</small></h2>
 <p style="color:#888">${owner}/${repo}</p>
 <hr>
 <pre style="font-family:system-ui,sans-serif;white-space:pre-wrap">${reviewText.replace(/</g, '&lt;')}</pre>`,
-  });
+  );
 
   res.json({ ok: true });
 });

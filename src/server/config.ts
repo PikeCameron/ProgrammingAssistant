@@ -13,12 +13,8 @@ export const config = {
   pollIntervalMs: parseInt(process.env['POLL_INTERVAL_MS'] ?? '60000', 10),
   port: parseInt(process.env['PORT'] ?? '3000', 10),
 
-  smtpHost: require('SMTP_HOST'),
-  smtpPort: parseInt(process.env['SMTP_PORT'] ?? '587', 10),
-  smtpSecure: process.env['SMTP_SECURE'] === 'true',
-  smtpUser: require('SMTP_USER'),
-  smtpPass: require('SMTP_PASS'),
-  smtpFrom: process.env['SMTP_FROM'] ?? process.env['SMTP_USER'] ?? '',
+  resendApiKey: require('RESEND_API_KEY'),
+  emailFrom: process.env['EMAIL_FROM'] ?? 'PR Dashboard <onboarding@resend.dev>',
   reviewToEmail: process.env['REVIEW_TO_EMAIL'] ?? 'cameron@getmobly.com',
 
   macReviewUrl: process.env['MAC_REVIEW_URL'] ?? '',
