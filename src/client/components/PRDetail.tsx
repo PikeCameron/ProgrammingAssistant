@@ -1,4 +1,8 @@
 import { useState } from 'react';
+
+function reviewKey(prId: string) { return `review-count:${prId}`; }
+function getReviewCount(prId: string) { return parseInt(localStorage.getItem(reviewKey(prId)) ?? '0', 10); }
+function incrementReviewCount(prId: string) { localStorage.setItem(reviewKey(prId), String(getReviewCount(prId) + 1)); }
 import type { PullRequest, ReviewDecision } from '@shared/types';
 import type { CardNotification } from './PRCard';
 
@@ -31,6 +35,7 @@ function fullDate(iso: string): string {
 
 export function PRDetail({ pr, notifications, onClose }: Props) {
   const [reviewState, setReviewState] = useState<ReviewState>('idle');
+  const [reviewCount, setReviewCount] = useState(() => getReviewCount(pr.id));
 
   async function handleReview() {
     setReviewState('loading');
@@ -42,6 +47,8 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
         body: JSON.stringify({ owner, repo, number: pr.number, title: pr.title, branch: pr.branchName, cloneUrl: pr.cloneUrl }),
       });
       if (!res.ok) throw new Error(await res.text());
+      incrementReviewCount(pr.id);
+      setReviewCount(getReviewCount(pr.id));
       setReviewState('done');
     } catch {
       setReviewState('error');
@@ -104,6 +111,12 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
         </div>
 
         <div className="pr-detail__actions">
+          {reviewCount > 0 && (
+            <span className="pr-detail__review-count">
+              <span className="pr-detail__review-check">✓</span>
+              {reviewCount}
+            </span>
+          )}
           <button
             className={`pr-detail__review-btn${reviewState === 'done' ? ' pr-detail__review-btn--done' : ''}${reviewState === 'error' ? ' pr-detail__review-btn--error' : ''}`}
             onClick={handleReview}

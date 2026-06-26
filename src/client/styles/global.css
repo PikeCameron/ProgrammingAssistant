@@ -379,9 +379,25 @@ html, body, #root {
 
 .pr-detail__actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 12px;
   padding-top: 4px;
   border-top: 1px solid var(--border);
+}
+
+.pr-detail__review-count {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pr-detail__review-check {
+  color: var(--success);
+  font-size: 15px;
 }
 
 .pr-detail__review-btn {
