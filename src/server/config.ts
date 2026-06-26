@@ -21,6 +21,5 @@ export const config = {
   smtpFrom: process.env['SMTP_FROM'] ?? process.env['SMTP_USER'] ?? '',
   reviewToEmail: process.env['REVIEW_TO_EMAIL'] ?? 'cameron@getmobly.com',
 
-  macSshUser: process.env['MAC_SSH_USER'] ?? '',
-  macSshHost: process.env['MAC_SSH_HOST'] ?? '',
+  macReviewUrl: process.env['MAC_REVIEW_URL'] ?? '',
 };

@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import nodemailer from 'nodemailer';
-import { spawn } from 'child_process';
 import { config } from '../config.js';
 export const reviewRouter = Router();
 const mailer = nodemailer.createTransport({
@@ -10,44 +9,20 @@ const mailer = nodemailer.createTransport({
     auth: { user: config.smtpUser, pass: config.smtpPass },
 });
 const MAX_DIFF_CHARS = 80_000;
-const CLAUDE_TIMEOUT_MS = 3 * 60 * 1000; // 3 minutes
-function runClaude(prompt) {
-    const { macSshUser, macSshHost } = config;
-    if (!macSshUser || !macSshHost) {
-        return Promise.reject(new Error('MAC_SSH_USER and MAC_SSH_HOST must be set in .env'));
-    }
-    return new Promise((resolve, reject) => {
-        // SSH to Mac and run claude there; -l loads login shell so claude is in PATH
-        const proc = spawn('ssh', [
-            '-o', 'BatchMode=yes',
-            '-o', 'ConnectTimeout=10',
-            `${macSshUser}@${macSshHost}`,
-            'zsh -c "source ~/.nvm/nvm.sh && claude --print"',
-        ], {
-            stdio: ['pipe', 'pipe', 'pipe'],
-        });
-        let stdout = '';
-        let stderr = '';
-        const timer = setTimeout(() => {
-            proc.kill();
-            reject(new Error('Claude Code timed out after 3 minutes'));
-        }, CLAUDE_TIMEOUT_MS);
-        proc.stdout.on('data', (chunk) => { stdout += chunk.toString(); });
-        proc.stderr.on('data', (chunk) => { stderr += chunk.toString(); });
-        proc.on('close', (code) => {
-            clearTimeout(timer);
-            if (code === 0)
-                resolve(stdout.trim());
-            else
-                reject(new Error(`SSH/claude exited ${code}: ${stderr.slice(0, 500)}`));
-        });
-        proc.on('error', (err) => {
-            clearTimeout(timer);
-            reject(new Error(`SSH failed: ${err.message}`));
-        });
-        proc.stdin.write(prompt);
-        proc.stdin.end();
+const CLAUDE_TIMEOUT_MS = 3 * 60 * 1000;
+async function runClaude(prompt) {
+    const { macReviewUrl } = config;
+    if (!macReviewUrl)
+        throw new Error('MAC_REVIEW_URL must be set in .env (e.g. http://camerons-macbook-pro.local:3002/review)');
+    const res = await fetch(macReviewUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+        signal: AbortSignal.timeout(CLAUDE_TIMEOUT_MS),
     });
+    if (!res.ok)
+        throw new Error(`Review server returned ${res.status}: ${await res.text()}`);
+    return res.text();
 }
 reviewRouter.post('/', async (req, res) => {
     const { owner, repo, number, title } = req.body;
