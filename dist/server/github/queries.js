@@ -8,6 +8,8 @@ export const DASHBOARD_QUERY = `
           title
           url
           isDraft
+          headRefName
+          headRepository { url }
           author { login }
           createdAt
           repository { nameWithOwner }
@@ -38,6 +40,8 @@ export const DASHBOARD_QUERY = `
           title
           url
           isDraft
+          headRefName
+          headRepository { url }
           author { login }
           createdAt
           repository { nameWithOwner }

@@ -15,6 +15,8 @@ interface RawPR {
   title: string;
   url: string;
   isDraft: boolean;
+  headRefName: string;
+  headRepository: { url: string };
   author: { login: string } | null;
   createdAt: string;
   repository: { nameWithOwner: string };
@@ -81,6 +83,8 @@ function mapPR(raw: RawPR, login: string): PullRequest {
     repoName: raw.repository.nameWithOwner,
     createdAt: raw.createdAt,
     isDraft: raw.isDraft,
+    branchName: raw.headRefName,
+    cloneUrl: raw.headRepository.url,
     checkStatus: toCheckStatus(commit?.statusCheckRollup?.state),
     reviewDecision: toReviewDecision(raw.reviewDecision),
     unresolvedThreads,

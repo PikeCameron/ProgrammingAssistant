@@ -41,6 +41,8 @@ function mapPR(raw, login) {
         repoName: raw.repository.nameWithOwner,
         createdAt: raw.createdAt,
         isDraft: raw.isDraft,
+        branchName: raw.headRefName,
+        cloneUrl: raw.headRepository.url,
         checkStatus: toCheckStatus(commit?.statusCheckRollup?.state),
         reviewDecision: toReviewDecision(raw.reviewDecision),
         unresolvedThreads,

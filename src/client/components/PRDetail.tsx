@@ -39,7 +39,7 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
       const res = await fetch('/api/review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owner, repo, number: pr.number, title: pr.title }),
+        body: JSON.stringify({ owner, repo, number: pr.number, title: pr.title, branch: pr.branchName, cloneUrl: pr.cloneUrl }),
       });
       if (!res.ok) throw new Error(await res.text());
       setReviewState('done');

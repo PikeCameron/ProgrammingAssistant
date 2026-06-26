@@ -10,6 +10,8 @@ export interface PullRequest {
   repoName: string;
   createdAt: string;
   isDraft: boolean;
+  branchName: string;
+  cloneUrl: string;
   checkStatus: CheckStatus;
   reviewDecision: ReviewDecision;
   unresolvedThreads: number;

@@ -24,14 +24,14 @@ async function sendEmail(subject: string, text: string, html: string): Promise<v
 const MAX_DIFF_CHARS = 80_000;
 const CLAUDE_TIMEOUT_MS = 3 * 60 * 1000;
 
-async function runClaude(prompt: string): Promise<string> {
+async function runClaude(prompt: string, branch?: string, cloneUrl?: string): Promise<string> {
   const { macReviewUrl } = config;
   if (!macReviewUrl) throw new Error('MAC_REVIEW_URL must be set in .env (e.g. http://camerons-macbook-pro.local:3002/review)');
 
   const res = await fetch(macReviewUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({ prompt, branch, cloneUrl }),
     signal: AbortSignal.timeout(CLAUDE_TIMEOUT_MS),
   });
 
@@ -40,8 +40,9 @@ async function runClaude(prompt: string): Promise<string> {
 }
 
 reviewRouter.post('/', async (req, res) => {
-  const { owner, repo, number, title } = req.body as {
+  const { owner, repo, number, title, branch, cloneUrl } = req.body as {
     owner: string; repo: string; number: number; title: string;
+    branch?: string; cloneUrl?: string;
   };
 
   if (!owner || !repo || !number || !title) {
@@ -69,10 +70,12 @@ reviewRouter.post('/', async (req, res) => {
   const truncated = diff.length > MAX_DIFF_CHARS;
   if (truncated) diff = diff.slice(0, MAX_DIFF_CHARS) + '\n\n[diff truncated — too large to include in full]';
 
+  const hasCheckout = Boolean(branch && cloneUrl);
   const prompt = `You are a senior software engineer reviewing a pull request. Be thorough but concise.
 
 PR: ${title} (#${number})
-Repository: ${owner}/${repo}${truncated ? '\nNote: the diff was truncated due to size.' : ''}
+Repository: ${owner}/${repo}
+${hasCheckout ? 'The repository is checked out at this PR branch — use your file reading tools to explore the codebase for full context.' : ''}${truncated ? '\nNote: the diff was truncated due to size.' : ''}
 
 Structure your review as:
 **Summary** — what does this PR do?
@@ -85,7 +88,7 @@ Structure your review as:
 ${diff}
 </diff>`;
 
-  const reviewText = await runClaude(prompt);
+  const reviewText = await runClaude(prompt, branch, cloneUrl);
 
   await sendEmail(
     `PR Review: ${title} (#${number})`,
