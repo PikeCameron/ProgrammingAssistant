@@ -316,8 +316,133 @@ html, body, #root {
   padding-top: 4px;
   border-top: 1px solid var(--border);
   overflow-y: auto;
+  flex-shrink: 0;
+  max-height: 100px;
+}
+
+.pr-detail__findings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+  overflow-y: auto;
   flex: 1;
   min-height: 0;
+}
+
+.pr-detail__review-summary {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding-bottom: 4px;
+}
+
+.finding-row {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.finding-row__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.finding-row__loc {
+  flex: 1;
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.finding-row__posted {
+  color: var(--success);
+  font-size: 12px;
+}
+
+.finding-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.diff-hunk {
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 8px;
+  overflow-x: auto;
+  white-space: pre;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.diff-hunk--empty {
+  font-family: inherit;
+  color: var(--text-meta);
+  padding: 8px;
+}
+
+.diff-line--add { background: rgba(46, 160, 67, 0.15); color: var(--success); }
+.diff-line--del { background: rgba(248, 81, 73, 0.15); color: var(--failure); }
+.diff-line--hunk { color: var(--text-meta); }
+
+.finding-row__textarea {
+  width: 100%;
+  min-height: 60px;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.finding-row__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.finding-row__actions button {
+  padding: 10px 16px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--commented-bg);
+  color: var(--commented-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.finding-row__actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.finding-row__error {
+  font-size: 12px;
+  color: var(--failure);
+}
+
+.finding-row__link {
+  font-size: 13px;
+  color: var(--commented-text);
 }
 
 .pr-detail__header {
