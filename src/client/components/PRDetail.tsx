@@ -71,7 +71,7 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
   }
 
   async function handleSaveFinding(findingId: string, comment: string) {
-    const res = await fetch(`/api/review/${owner}/${repo}/${pr.number}/findings/${findingId}`, {
+    const res = await fetch(`/api/review/${owner}/${repo}/${pr.number}/findings/${encodeURIComponent(findingId)}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ comment }),
@@ -85,7 +85,7 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
   }
 
   async function handleSubmitFinding(findingId: string) {
-    const res = await fetch(`/api/review/${owner}/${repo}/${pr.number}/findings/${findingId}/submit`, {
+    const res = await fetch(`/api/review/${owner}/${repo}/${pr.number}/findings/${encodeURIComponent(findingId)}/submit`, {
       method: 'POST',
     });
     const data = await res.json() as { finding?: ReviewResult['findings'][number]; error?: string };
