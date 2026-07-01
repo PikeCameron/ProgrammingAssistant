@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { PullRequest, ReviewDecision, ReviewResult } from '@shared/types';
 import type { CardNotification } from './PRCard';
 import { ReviewFindingRow } from './ReviewFindingRow';
+import { ReviewFindingsViewer } from './ReviewFindingsViewer';
 
 interface Props {
   pr: PullRequest;
@@ -33,7 +34,7 @@ function fullDate(iso: string): string {
 export function PRDetail({ pr, notifications, onClose }: Props) {
   const [reviewState, setReviewState] = useState<ReviewState>('idle');
   const [review, setReview] = useState<ReviewResult | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   const [owner, repo] = pr.repoName.split('/');
 
@@ -103,6 +104,18 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
     reviewState === 'error'   ? 'Failed — retry' :
     'Review with Claude';
 
+  if (review && viewerIndex !== null) {
+    return (
+      <ReviewFindingsViewer
+        findings={review.findings}
+        initialIndex={viewerIndex}
+        onSave={handleSaveFinding}
+        onSubmit={handleSubmitFinding}
+        onClose={() => setViewerIndex(null)}
+      />
+    );
+  }
+
   return (
     <div className="pr-detail-overlay" onMouseDown={onClose} onTouchStart={onClose}>
       <div
@@ -158,15 +171,8 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
             {review.findings.length === 0 ? (
               <div className="pr-detail__notif-empty">No findings — looks clean.</div>
             ) : (
-              review.findings.map((f) => (
-                <ReviewFindingRow
-                  key={f.id}
-                  finding={f}
-                  expanded={expandedId === f.id}
-                  onToggle={() => setExpandedId(expandedId === f.id ? null : f.id)}
-                  onSave={(comment) => handleSaveFinding(f.id, comment)}
-                  onSubmit={() => handleSubmitFinding(f.id)}
-                />
+              review.findings.map((f, i) => (
+                <ReviewFindingRow key={f.id} finding={f} onClick={() => setViewerIndex(i)} />
               ))
             )}
           </div>

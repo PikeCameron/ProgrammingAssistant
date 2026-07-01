@@ -1,21 +1,23 @@
 interface Props {
   hunk: string | null;
+  className?: string;
 }
 
-export function DiffHunkView({ hunk }: Props) {
+export function DiffHunkView({ hunk, className }: Props) {
+  const cls = className ? `diff-hunk ${className}` : 'diff-hunk';
   if (!hunk) {
-    return <div className="diff-hunk diff-hunk--empty">Line not found in current diff (may be outdated).</div>;
+    return <div className={`${cls} diff-hunk--empty`}>Line not found in current diff (may be outdated).</div>;
   }
   const lines = hunk.split('\n');
   return (
-    <pre className="diff-hunk">
+    <pre className={cls}>
       {lines.map((line, i) => {
-        const cls =
+        const lineCls =
           line.startsWith('+') && !line.startsWith('+++') ? 'diff-line diff-line--add' :
           line.startsWith('-') && !line.startsWith('---') ? 'diff-line diff-line--del' :
           line.startsWith('@@') ? 'diff-line diff-line--hunk' :
           'diff-line';
-        return <div key={i} className={cls}>{line}</div>;
+        return <div key={i} className={lineCls}>{line}</div>;
       })}
     </pre>
   );

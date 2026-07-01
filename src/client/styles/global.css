@@ -342,6 +342,7 @@ html, body, #root {
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .finding-row__header {
@@ -349,7 +350,6 @@ html, body, #root {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  cursor: pointer;
   min-height: 44px;
 }
 
@@ -368,11 +368,10 @@ html, body, #root {
   font-size: 12px;
 }
 
-.finding-row__body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 12px 12px;
+.finding-row__chevron {
+  color: var(--text-meta);
+  font-size: 18px;
+  line-height: 1;
 }
 
 .diff-hunk {
@@ -394,31 +393,100 @@ html, body, #root {
   padding: 8px;
 }
 
+.diff-hunk--fill {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  font-size: 13px;
+}
+
 .diff-line--add { background: rgba(46, 160, 67, 0.15); color: var(--success); }
 .diff-line--del { background: rgba(248, 81, 73, 0.15); color: var(--failure); }
 .diff-line--hunk { color: var(--text-meta); }
 
-.finding-row__textarea {
-  width: 100%;
-  min-height: 60px;
+.finding-row__error {
+  font-size: 12px;
+  color: var(--failure);
+}
+
+.finding-row__link {
   font-size: 13px;
+  color: var(--commented-text);
+}
+
+/* ── Review Findings full-screen viewer ── */
+
+.finding-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 20px;
+  box-sizing: border-box;
+}
+
+.finding-viewer__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.finding-viewer__position {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.finding-viewer__close {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: var(--border);
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.finding-viewer__loc {
+  font-size: 13px;
+  font-family: monospace;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.finding-viewer__textarea {
+  width: 100%;
+  min-height: 80px;
+  flex-shrink: 0;
+  font-size: 14px;
   font-family: inherit;
-  padding: 8px;
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid var(--border);
-  background: var(--bg-card);
+  background: var(--bg);
   color: var(--text-primary);
   resize: vertical;
   box-sizing: border-box;
 }
 
-.finding-row__actions {
+.finding-viewer__actions {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
-.finding-row__actions button {
+.finding-viewer__actions button {
   padding: 10px 16px;
   min-height: 44px;
   border-radius: 8px;
@@ -430,19 +498,33 @@ html, body, #root {
   cursor: pointer;
 }
 
-.finding-row__actions button:disabled {
+.finding-viewer__actions button:disabled {
   opacity: 0.5;
   cursor: default;
 }
 
-.finding-row__error {
-  font-size: 12px;
-  color: var(--failure);
+.finding-viewer__nav {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.finding-row__link {
-  font-size: 13px;
-  color: var(--commented-text);
+.finding-viewer__nav-btn {
+  flex: 1;
+  padding: 12px;
+  min-height: 48px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--border);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.finding-viewer__nav-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .pr-detail__header {
