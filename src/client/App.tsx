@@ -5,7 +5,9 @@ import { useClearedComments } from './hooks/useClearedComments';
 import { useClearedNewCommits } from './hooks/useClearedNewCommits';
 import { PRSection } from './components/PRSection';
 import { PRDetail } from './components/PRDetail';
+import { SettingsPanel } from './components/SettingsPanel';
 import type { CardNotification } from './components/PRCard';
+import { getMacReviewUrlOverride, setMacReviewUrlOverride } from './macReviewUrl';
 
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -16,6 +18,8 @@ export function App() {
   const { visibleCount, clearPR: clearComments } = useClearedComments();
   const { showNewCommitAlert, clearPR: clearNewCommit } = useClearedNewCommits();
   const [selectedPR, setSelectedPR] = useState<PullRequest | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [reviewUrlOverride, setReviewUrlOverride] = useState(getMacReviewUrlOverride);
 
   function getNotifications(pr: PullRequest): CardNotification[] {
     const notes: CardNotification[] = [];
@@ -63,7 +67,22 @@ export function App() {
         ) : (
           <span>Loading…</span>
         )}
+        <button
+          className="footer__settings-btn"
+          onMouseDown={() => setSettingsOpen(true)}
+          onTouchStart={() => setSettingsOpen(true)}
+          aria-label="Settings"
+        >
+          ⚙
+        </button>
       </div>
+      {settingsOpen && (
+        <SettingsPanel
+          value={reviewUrlOverride}
+          onSave={(value) => { setMacReviewUrlOverride(value); setReviewUrlOverride(getMacReviewUrlOverride()); }}
+          onClose={() => setSettingsOpen(false)}
+        />
+      )}
     </div>
   );
 }

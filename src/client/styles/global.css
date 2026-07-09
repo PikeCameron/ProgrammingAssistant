@@ -283,6 +283,115 @@ html, body, #root {
 .status-dot--on  { background: var(--success); }
 .status-dot--off { background: var(--failure); }
 
+.footer__settings-btn {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-meta);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Settings panel ── */
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 400;
+}
+
+.settings-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings-panel__title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings-panel__close {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--border);
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-panel__hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.settings-panel__input {
+  width: 100%;
+  min-height: 44px;
+  font-size: 14px;
+  font-family: monospace;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+
+.settings-panel__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.settings-panel__actions button {
+  padding: 10px 16px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--commented-bg);
+  color: var(--commented-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settings-panel__actions button.settings-panel__default-btn {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
 /* ── PR Detail Modal ── */
 
 .pr-detail-overlay {

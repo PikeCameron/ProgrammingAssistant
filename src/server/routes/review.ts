@@ -24,9 +24,10 @@ async function fetchChangedFiles(owner: string, repo: string, number: number): P
   return res.json() as Promise<GhFile[]>;
 }
 
-async function runClaude(prompt: string, branch?: string, cloneUrl?: string): Promise<string> {
-  const { macReviewUrl } = config;
-  if (!macReviewUrl) throw new Error('MAC_REVIEW_URL must be set in .env (e.g. http://camerons-macbook-pro.local:3002/review)');
+async function runClaude(prompt: string, branch?: string, cloneUrl?: string, urlOverride?: string): Promise<string> {
+  const macReviewUrl = urlOverride || config.macReviewUrl;
+  if (!macReviewUrl) throw new Error('MAC_REVIEW_URL must be set in .env (e.g. http://camerons-macbook-pro.local:3002/review), or set a review server override in the app\'s Settings panel');
+  if (!/^https?:\/\//.test(macReviewUrl)) throw new Error(`Invalid review server URL: ${macReviewUrl}`);
 
   const res = await fetch(macReviewUrl, {
     method: 'POST',
@@ -103,9 +104,9 @@ function findHunkForLine(patch: string | undefined, line: number): string | null
 }
 
 reviewRouter.post('/', async (req, res) => {
-  const { owner, repo, number, title, branch, cloneUrl, commitSha } = req.body as {
+  const { owner, repo, number, title, branch, cloneUrl, commitSha, macReviewUrl } = req.body as {
     owner: string; repo: string; number: number; title: string;
-    branch?: string; cloneUrl?: string; commitSha: string;
+    branch?: string; cloneUrl?: string; commitSha: string; macReviewUrl?: string;
   };
 
   if (!owner || !repo || !number || !title || !commitSha) {
@@ -155,7 +156,7 @@ ${diff}
 
   let rawResponse: string;
   try {
-    rawResponse = await runClaude(prompt, branch, cloneUrl);
+    rawResponse = await runClaude(prompt, branch, cloneUrl, macReviewUrl);
   } catch (err) {
     res.status(502).json({ error: `Claude review failed: ${(err as Error).message}` });
     return;

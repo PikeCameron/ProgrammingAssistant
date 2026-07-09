@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { PullRequest, ReviewDecision, ReviewResult } from '@shared/types';
 import type { CardNotification } from './PRCard';
 import { ReviewFindingsViewer } from './ReviewFindingsViewer';
+import { resolveMacReviewUrl } from '../macReviewUrl';
 
 interface Props {
   pr: PullRequest;
@@ -59,6 +60,7 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
         body: JSON.stringify({
           owner, repo, number: pr.number, title: pr.title,
           branch: pr.branchName, cloneUrl: pr.cloneUrl, commitSha: pr.latestCommitSha,
+          macReviewUrl: resolveMacReviewUrl(),
         }),
       });
       if (!res.ok) throw new Error(await res.text());

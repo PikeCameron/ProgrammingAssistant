@@ -11,10 +11,12 @@ async function fetchChangedFiles(owner, repo, number) {
         throw new Error(`GitHub files fetch returned ${res.status}: ${await res.text()}`);
     return res.json();
 }
-async function runClaude(prompt, branch, cloneUrl) {
-    const { macReviewUrl } = config;
+async function runClaude(prompt, branch, cloneUrl, urlOverride) {
+    const macReviewUrl = urlOverride || config.macReviewUrl;
     if (!macReviewUrl)
-        throw new Error('MAC_REVIEW_URL must be set in .env (e.g. http://camerons-macbook-pro.local:3002/review)');
+        throw new Error('MAC_REVIEW_URL must be set in .env (e.g. http://camerons-macbook-pro.local:3002/review), or set a review server override in the app\'s Settings panel');
+    if (!/^https?:\/\//.test(macReviewUrl))
+        throw new Error(`Invalid review server URL: ${macReviewUrl}`);
     const res = await fetch(macReviewUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,7 +76,7 @@ function findHunkForLine(patch, line) {
     return hit ? hit.text : null;
 }
 reviewRouter.post('/', async (req, res) => {
-    const { owner, repo, number, title, branch, cloneUrl, commitSha } = req.body;
+    const { owner, repo, number, title, branch, cloneUrl, commitSha, macReviewUrl } = req.body;
     if (!owner || !repo || !number || !title || !commitSha) {
         res.status(400).json({ error: 'Missing required fields (owner, repo, number, title, commitSha)' });
         return;
@@ -120,7 +122,7 @@ ${diff}
 </diff>`;
     let rawResponse;
     try {
-        rawResponse = await runClaude(prompt, branch, cloneUrl);
+        rawResponse = await runClaude(prompt, branch, cloneUrl, macReviewUrl);
     }
     catch (err) {
         res.status(502).json({ error: `Claude review failed: ${err.message}` });
