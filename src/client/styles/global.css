@@ -471,6 +471,8 @@ html, body, #root {
   overflow-y: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .diff-hunk::-webkit-scrollbar {
@@ -595,6 +597,8 @@ html, body, #root {
   color: var(--text-primary);
   resize: vertical;
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .finding-viewer__actions {

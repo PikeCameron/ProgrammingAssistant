@@ -85,6 +85,12 @@ export function ReviewFindingsViewer({ findings, onSave, onSubmit, onSetArchived
             className="finding-viewer__textarea"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
+            onSelect={(e) => {
+              // CSS user-select:none doesn't suppress a textarea's own selection
+              // UI, so collapse any range back to a caret as soon as it forms.
+              const el = e.currentTarget;
+              if (el.selectionStart !== el.selectionEnd) el.selectionEnd = el.selectionStart;
+            }}
             disabled={locked || viewingArchived}
             rows={3}
           />
