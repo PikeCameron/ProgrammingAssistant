@@ -150,6 +150,11 @@ Rules:
 - Omit findings for things that are fine; only include genuine observations. It is OK to return an empty "findings" array.
 - Do not include markdown formatting, backticks, or file:line prose citations inside "comment" — plain text only, since it will be posted verbatim as a GitHub review comment.
 
+In addition to general correctness/quality review, also specifically check for these project conventions:
+- CSS custom properties: any CSS variable (var(--foo)) used in styles must already be defined in mobly.css. Flag any new or used CSS variable that isn't defined there.
+- Vue API calls: in .vue files, API/async calls should use the .then()/.catch()/.finally() promise-chaining pattern. Flag any API call wrapped in try/catch instead.
+- Drizzle usage: Drizzle ORM code (imports from drizzle-orm, db queries, schema usage) must live only in a *.service.ts file. Flag any Drizzle usage found in a file that is not named *.service.ts.
+
 <diff>
 ${diff}
 </diff>`;
