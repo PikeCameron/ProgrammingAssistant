@@ -33,6 +33,7 @@ function fullDate(iso: string): string {
 
 export function PRDetail({ pr, notifications, onClose }: Props) {
   const [reviewState, setReviewState] = useState<ReviewState>('idle');
+  const [reviewError, setReviewError] = useState<string | null>(null);
   const [review, setReview] = useState<ReviewResult | null>(null);
   const [viewerOpen, setViewerOpen] = useState(false);
 
@@ -53,6 +54,7 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
 
   async function handleReview() {
     setReviewState('loading');
+    setReviewError(null);
     try {
       const res = await fetch('/api/review', {
         method: 'POST',
@@ -63,11 +65,20 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
           macReviewUrl: resolveMacReviewUrl(),
         }),
       });
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const text = await res.text();
+        let message = text;
+        try {
+          const parsed = JSON.parse(text) as { error?: string };
+          if (typeof parsed.error === 'string') message = parsed.error;
+        } catch { /* not JSON, use raw text */ }
+        throw new Error(message);
+      }
       const data = await res.json() as { review: ReviewResult };
       setReview(data.review);
       setReviewState('done');
-    } catch {
+    } catch (err) {
+      setReviewError(err instanceof Error ? err.message : 'Unknown error');
       setReviewState('error');
     }
   }
@@ -199,6 +210,9 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
               <span className="pr-detail__review-check">✓</span>
               {review.findings.length}
             </span>
+          )}
+          {reviewState === 'error' && reviewError && (
+            <span className="pr-detail__review-error" title={reviewError}>{reviewError}</span>
           )}
           <button
             className={`pr-detail__review-btn${reviewState === 'done' ? ' pr-detail__review-btn--done' : ''}${reviewState === 'error' ? ' pr-detail__review-btn--error' : ''}`}

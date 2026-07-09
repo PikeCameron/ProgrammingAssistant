@@ -730,6 +730,16 @@ html, body, #root {
   font-size: 15px;
 }
 
+.pr-detail__review-error {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--failure);
+}
+
 .pr-detail__review-btn {
   display: flex;
   align-items: center;
