@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { config } from '../config.js';
 import type { ReviewFinding, ReviewResult, ReviewSeverity } from '../../shared/types.js';
-import { getReview, setReview, updateFindingComment, markFindingPosted, markFindingError } from '../reviewStore.js';
+import { getReview, setReview, updateFindingComment, markFindingPosted, markFindingError, setFindingArchived } from '../reviewStore.js';
 
 export const reviewRouter = Router();
 
@@ -215,6 +215,19 @@ reviewRouter.patch('/:owner/:repo/:number/findings/:findingId', (req, res) => {
 
   const finding = updateFindingComment(prId, findingId, comment);
   if (!finding) { res.status(404).json({ error: 'Review or finding not found' }); return; }
+  res.json({ finding });
+});
+
+reviewRouter.post('/:owner/:repo/:number/findings/:findingId/archive', (req, res) => {
+  const { owner, repo, number, findingId } = req.params;
+  const { archived } = req.body as { archived?: boolean };
+  if (typeof archived !== 'boolean') {
+    res.status(400).json({ error: 'archived (boolean) is required' });
+    return;
+  }
+  const prId = `${owner}/${repo}/${number}`;
+  const finding = setFindingArchived(prId, findingId, archived);
+  if (!finding) { res.status(404).json({ error: 'Review or finding not found, or finding already posted' }); return; }
   res.json({ finding });
 });
 

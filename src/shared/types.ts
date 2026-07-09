@@ -28,7 +28,7 @@ export interface DashboardData {
 }
 
 export type ReviewSeverity = 'issue' | 'suggestion' | 'nit';
-export type ReviewFindingStatus = 'pending' | 'posted';
+export type ReviewFindingStatus = 'pending' | 'posted' | 'archived';
 
 export interface ReviewFinding {
   id: string;

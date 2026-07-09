@@ -32,3 +32,13 @@ export function markFindingError(prId, findingId, message) {
     if (finding)
         finding.postError = message;
 }
+export function setFindingArchived(prId, findingId, archived) {
+    const review = reviews.get(prId);
+    const finding = review?.findings.find((f) => f.id === findingId);
+    if (!review || !finding)
+        return null;
+    if (finding.status === 'posted')
+        return null;
+    finding.status = archived ? 'archived' : 'pending';
+    return finding;
+}

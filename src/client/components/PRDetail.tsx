@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { PullRequest, ReviewDecision, ReviewResult } from '@shared/types';
 import type { CardNotification } from './PRCard';
-import { ReviewFindingRow } from './ReviewFindingRow';
 import { ReviewFindingsViewer } from './ReviewFindingsViewer';
 
 interface Props {
@@ -34,7 +33,7 @@ function fullDate(iso: string): string {
 export function PRDetail({ pr, notifications, onClose }: Props) {
   const [reviewState, setReviewState] = useState<ReviewState>('idle');
   const [review, setReview] = useState<ReviewResult | null>(null);
-  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   const [owner, repo] = pr.repoName.split('/');
 
@@ -98,20 +97,34 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
     });
   }
 
+  async function handleSetArchived(findingId: string, archived: boolean) {
+    const res = await fetch(`/api/review/${owner}/${repo}/${pr.number}/findings/${encodeURIComponent(findingId)}/archive`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ archived }),
+    });
+    if (!res.ok) return;
+    const data = await res.json() as { finding: ReviewResult['findings'][number] };
+    setReview((prev) => prev && {
+      ...prev,
+      findings: prev.findings.map((f) => (f.id === findingId ? data.finding : f)),
+    });
+  }
+
   const reviewLabel =
     reviewState === 'loading' ? 'Reviewing…' :
     reviewState === 'done'    ? 'Re-review with Claude' :
     reviewState === 'error'   ? 'Failed — retry' :
     'Review with Claude';
 
-  if (review && viewerIndex !== null) {
+  if (review && viewerOpen) {
     return (
       <ReviewFindingsViewer
         findings={review.findings}
-        initialIndex={viewerIndex}
         onSave={handleSaveFinding}
         onSubmit={handleSubmitFinding}
-        onClose={() => setViewerIndex(null)}
+        onSetArchived={handleSetArchived}
+        onClose={() => setViewerOpen(false)}
       />
     );
   }
@@ -166,14 +179,14 @@ export function PRDetail({ pr, notifications, onClose }: Props) {
         </div>
 
         {review && (
-          <div className="pr-detail__findings">
+          <div className="pr-detail__findings-summary">
             {review.summary && <div className="pr-detail__review-summary">{review.summary}</div>}
             {review.findings.length === 0 ? (
               <div className="pr-detail__notif-empty">No findings — looks clean.</div>
             ) : (
-              review.findings.map((f, i) => (
-                <ReviewFindingRow key={f.id} finding={f} onClick={() => setViewerIndex(i)} />
-              ))
+              <button className="pr-detail__findings-btn" onClick={() => setViewerOpen(true)}>
+                Review {review.findings.length} finding{review.findings.length !== 1 ? 's' : ''} ›
+              </button>
             )}
           </div>
         )}
